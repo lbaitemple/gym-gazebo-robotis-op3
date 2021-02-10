@@ -6,6 +6,13 @@ logger = logging.getLogger(__name__)
 # Gazebo
 # ----------------------------------------
 
+# Robotis envs
+register(
+    id='GazeboRobotisOp3-v0',
+    entry_point='gym_gazebo.envs.robotis:GazeboRobotisOp3Env',
+    #More arguments here
+)
+
 # Turtlebot envs
 register(
     id='GazeboMazeTurtlebotLidar-v0',
