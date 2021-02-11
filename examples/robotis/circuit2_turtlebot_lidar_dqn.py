@@ -29,7 +29,7 @@ def clear_monitor_files(training_dir):
 if __name__ == '__main__':
 
     #REMEMBER!: turtlebot_nn_setup.bash must be executed.
-    env = gym.make('GazeboRobotisOp3-v0')
+    env = gym.make('GazeboCircuit2TurtlebotLidarNn-v0')
     outdir = '/tmp/gazebo_gym_experiments/'
     path = '/tmp/turtle_c2_dqn_ep'
     plotter = liveplot.LivePlot(outdir)
@@ -113,7 +113,7 @@ if __name__ == '__main__':
             qValues = deepQ.getQValues(observation)
 
             action = deepQ.selectAction(qValues, explorationRate)
-            print 'step'
+            
             newObservation, reward, done, info = env.step(action)
 
             cumulated_reward += reward
