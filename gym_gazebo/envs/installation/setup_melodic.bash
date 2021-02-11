@@ -30,8 +30,8 @@ vcs import < ../../gazebo_ros_melodic.repos
 cd ..
 touch catkin_ws/src/ecl_navigation/ecl_mobile_robot/CATKIN_IGNORE
 # catkin_make
-bash -c 'echo source `pwd`/devel/setup.bash >> ~/.bashrc'
-echo "## ROS workspace compiled ##"
+# bash -c 'echo source `pwd`/devel/setup.bash >> ~/.bashrc'
+# echo "## ROS workspace compiled ##"
 
 # add own models path to gazebo models path
 if [ -z "$GAZEBO_MODEL_PATH" ]; then
