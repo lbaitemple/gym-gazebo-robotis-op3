@@ -10,8 +10,11 @@ if __name__ == '__main__':
     env = gym.make('GazeboRobotisOp3-v0')
     env._max_episode_steps = 10000000000000
     env = gym.wrappers.Monitor(env, outdir, force=True, resume=False)
-    env.reset()
     while True:
-        action = np.random.rand(20)
-        newObservation, reward, done, info = env.step(action)
+        env.reset()
+        while True:
+            action = np.random.rand(20) - 0.5
+            state, reward, done, info = env.step(action * 0.1)
+            print state
+            if done: break
     env.close()
