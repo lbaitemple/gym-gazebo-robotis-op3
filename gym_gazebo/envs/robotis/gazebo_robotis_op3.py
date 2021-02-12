@@ -10,6 +10,7 @@ from geometry_msgs.msg import Twist
 from std_msgs.msg import Float64
 from control_msgs.msg import JointControllerState
 from gazebo_msgs.msg import LinkStates
+from controller_manager_msgs.srv import ListControllers
 from std_srvs.srv import Empty
 
 from sensor_msgs.msg import LaserScan
@@ -39,6 +40,29 @@ op3_command_topics = [
     "/robotis_op3/r_sho_roll_position/command"
 ]
 
+op3_controller_names = [
+    "head_pan_position",
+    "head_tilt_position",
+    "l_ank_pitch_position",
+    "l_ank_roll_position",
+    "l_el_position",
+    "l_hip_pitch_position",
+    "l_hip_roll_position",
+    "l_hip_yaw_position",
+    "l_knee_position",
+    "l_sho_pitch_position",
+    "l_sho_roll_position",
+    "r_ank_pitch_position",
+    "r_ank_roll_position",
+    "r_el_position",
+    "r_hip_pitch_position",
+    "r_hip_roll_position",
+    "r_hip_yaw_position",
+    "r_knee_position",
+    "r_sho_pitch_position",
+    "r_sho_roll_position"
+]
+
 class GazeboRobotisOp3Env(gazebo_env.GazeboEnv):
 
     def __init__(self):
@@ -50,7 +74,9 @@ class GazeboRobotisOp3Env(gazebo_env.GazeboEnv):
         self.vel_pub = rospy.Publisher('/mobile_base/commands/velocity', Twist, queue_size=5)
         self.unpause = rospy.ServiceProxy('/gazebo/unpause_physics', Empty)
         self.pause = rospy.ServiceProxy('/gazebo/pause_physics', Empty)
+        self.listControllers = rospy.ServiceProxy('/robotis_op3/controller_manager/list_controllers', ListControllers)
         self.reset_proxy = rospy.ServiceProxy('/gazebo/reset_simulation', Empty)
+        self.prev_action = np.zeros(20)
 
         self.reward_range = (-np.inf, np.inf)
 
@@ -79,6 +105,22 @@ class GazeboRobotisOp3Env(gazebo_env.GazeboEnv):
                     return data
             except:
                 pass
+    
+    def supress_action(self, action):
+        if self.prev_action is None:
+            return action
+        prev = np.array(self.prev_action)
+        curr = np.array(action)
+        delta = curr - prev
+
+        max_speed = 0.05
+        delta = np.minimum(delta, max_speed)
+        delta = np.maximum(delta, -max_speed)
+        supressed_action = prev + delta
+
+        self.prev_action = supressed_action
+
+        return supressed_action
 
     def step(self, action):
         rospy.wait_for_service('/gazebo/unpause_physics')
@@ -87,6 +129,7 @@ class GazeboRobotisOp3Env(gazebo_env.GazeboEnv):
         except (rospy.ServiceException) as e:
             print ("/gazebo/unpause_physics service call failed")
 
+        action = self.supress_action(action)
         for index, pub in enumerate(self.publishers):
             value = Float64()
             value.data = action[index]
@@ -111,7 +154,25 @@ class GazeboRobotisOp3Env(gazebo_env.GazeboEnv):
 
         return np.asarray(state), reward, done, {}
 
+    def wait_for_controllers(self):
+        rospy.wait_for_service('/robotis_op3/controller_manager/list_controllers')
+        ctrls = None
+        while True:
+            ctrls = self.listControllers().controller
+            ctrl_names = [x.name for x in ctrls]
+            flag = True
+            for name in op3_controller_names:
+                if name not in ctrl_names:
+                    flag = False
+                    break
+            if flag: break
+        print 'Checked all controllers available'
+        for ctrl in ctrls:
+            print ctrl.name, ctrl.state
+
     def reset(self):
+        self.wait_for_controllers()
+
         # Resets the state of the environment and returns an initial observation.
         rospy.wait_for_service('/gazebo/reset_simulation')
         try:

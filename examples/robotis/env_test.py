@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import time
 import gym
 from gym import wrappers
 import gym_gazebo
@@ -13,8 +14,8 @@ if __name__ == '__main__':
     while True:
         env.reset()
         while True:
-            action = np.random.rand(20) - 0.5
-            state, reward, done, info = env.step(action * 0.1)
-            print state
+            action = 0 * (np.random.rand(20) - 0.5)
+            state, reward, done, info = env.step(action)
+            # time.sleep(0.1)
             if done: break
     env.close()
