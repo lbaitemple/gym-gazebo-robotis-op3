@@ -14,7 +14,7 @@ if __name__ == '__main__':
     while True:
         env.reset()
         while True:
-            action = 0 * (np.random.rand(20) - 0.5)
+            action = 0.5 * (np.random.rand(20) - 0.5)
             state, reward, done, info = env.step(action)
             # time.sleep(0.1)
             if done: break

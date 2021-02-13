@@ -70,8 +70,6 @@ class GazeboRobotisOp3Env(gazebo_env.GazeboEnv):
         gazebo_env.GazeboEnv.__init__(self, "GazeboRobotisOp3.launch")
 
         self.publishers = [rospy.Publisher(topic, Float64, queue_size=5) for topic in op3_command_topics]
-
-        self.vel_pub = rospy.Publisher('/mobile_base/commands/velocity', Twist, queue_size=5)
         self.unpause = rospy.ServiceProxy('/gazebo/unpause_physics', Empty)
         self.pause = rospy.ServiceProxy('/gazebo/pause_physics', Empty)
         self.listControllers = rospy.ServiceProxy('/robotis_op3/controller_manager/list_controllers', ListControllers)
