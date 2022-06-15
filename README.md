@@ -1,5 +1,11 @@
 <img src="data/logo.jpg" width=25% align="right" /> [![Build status](https://travis-ci.org/erlerobot/gym-gazebo.svg?branch=master)](https://travis-ci.org/erlerobot/gym-gazebo)
 
+```
+wget https://raw.githubusercontent.com/lbaitemple/gym-gazebo-robotis-op3/master/ubuntu18-ros-melodic-robotis-op3-gym-gazebo-setup.sh
+bash ./ubuntu18-ros-melodic-robotis-op3-gym-gazebo-setup.sh
+```
+
+
 
 **THIS REPOSITORY IS DEPRECATED, REFER TO https://github.com/AcutronicRobotics/gym-gazebo2 FOR THE NEW VERSION.**
 
